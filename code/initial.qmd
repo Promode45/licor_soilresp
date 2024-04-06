@@ -1,0 +1,52 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(purrr)
+```
+
+You can add options to executable code like this
+
+```{r}
+soilresp <- read_csv("../data/soilresp_20240207.csv",
+                    skip = 1, 
+                    col_names = T,
+                    trim_ws = T)
+soilresp
+```
+
+```{r - data wrangling}
+soilresp_w <- soilresp[-1,] %>% 
+  clean_names() %>% 
+  mutate(fco2_dry = as.numeric(fco2_dry)) %>% 
+  mutate(label = as.numeric(label))
+  
+soilresp_mean <- soilresp_w %>% 
+  group_by(label) %>% 
+  summarise(mean = mean(fco2_dry,na.rm = T)) %>% 
+  as.data.frame()  %>% 
+write_csv("../output/mean_flux20240207.csv")
+  
+  
+
+```
+```{r function}
+soilresp_avg <- function(data, label, parameter){
+  soilresp_avg %>% 
+    group_by(label) %>% 
+    nest() %>% 
+    mutate(mean = map(data,
+                      ))
+    
+    df
+}
+
+soilresp_avg(soilresp_w,label, parameter)
+```
+
