@@ -1,0 +1,64 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(stringr)
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+data <- read.csv("../data/soilresp_midterm.csv")
+data
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+```{r}
+data_w <- data[-26,] %>% 
+  clean_names() %>% 
+  
+  mutate(
+    rep = case_when
+    (plot == c(1:5) ~ "1",
+    plot == c(6:10) ~ "2",
+      plot == c(11:15) ~ "3",
+      plot == c(16:20) ~ "4", 
+      plot == c(21:25) ~ "5"
+     )
+  ) %>% 
+  pivot_longer(cols =r1_01_29_24:r6_02_07_24,
+               values_to = "respiration",
+               names_to = "x1")   %>%
+  mutate(x1 = gsub("resp", "", x1)) %>% 
+  pivot_longer(cols = starts_with("sw"),
+               values_to = "watercontent", 
+               names_to = "x2"
+               ) %>% 
+  mutate(x2 = gsub("water", "", x2)) %>% 
+  pivot_longer(cols = st1:st6,
+               values_to = "soiltemp",
+               names_to = "x3") %>% 
+  mutate(x3 = gsub("temp", "", x3)) %>% 
+ mutate(date1 = str_extract(x1, "\\d{2}_\\d{2}_\\d{2}")
+  ) %>% 
+  mutate(date = as.Date(date1, "%m_%d_%y")) %>% 
+  select(c(-x1,-x2,-x3,-date1)) 
+
+data_w
+
+```
+
